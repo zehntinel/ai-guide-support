@@ -146,7 +146,7 @@ def answer_query_with_context(
     return response["choices"][0]["text"].strip(" \n"), context
 
 def index(request):
-    return render(request, "index.html", { "default_question": "What is The Minimalist Entrepreneur about?" })
+    return render(request, "index.html", { "default_question": "Qué cubre el seguro?" })
 
 @csrf_exempt
 def ask(request):
@@ -164,8 +164,8 @@ def ask(request):
         previous_question.save()
         return JsonResponse({ "question": previous_question.question, "answer": previous_question.answer, "audio_src_url": audio_src_url, "id": previous_question.pk })
 
-    df = pd.read_csv('book.pdf.pages.csv')
-    document_embeddings = load_embeddings('book.pdf.embeddings.csv')
+    df = pd.read_csv('playbook.pdf.pages.csv')
+    document_embeddings = load_embeddings('playbook.pdf.embeddings.csv')
     answer, context = answer_query_with_context(question_asked, df, document_embeddings)
 
     project_uuid = '6314e4df'
@@ -185,7 +185,7 @@ def ask(request):
         raw=None
     )
 
-    question = Question(question=question_asked, answer=answer, context=context, audio_src_url=response['item']['audio_src'])
+    question = Question(question=question_asked, answer=answer, context=context)
     question.save()
 
     return JsonResponse({ "question": question.question, "answer": answer, "audio_src_url": question.audio_src_url, "id": question.pk })
